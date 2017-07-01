@@ -102,20 +102,44 @@ for idx in range(0,np.shape(y_tot)[0]):
 # find the cluster centers
 
 #### things to change (generalize to n-dimension and arbitrary number of cluster centers, don't count outliers as a part of a cluster)
-     
-inds = np.squeeze(np.where((p>p_thresh) & (delta>delta_thresh)))
+
+inds_center = np.squeeze(np.where((p>p_thresh) & (delta>delta_thresh)))
+
+### get rid of points that are too close
+
+print inds_center
+print p[inds_center]
+print delta[inds_center]
+
+for idx1 in range(0,len(inds_center)):
+    for idx2 in range(0,len(inds_center)):
+        if idx1 == idx2:
+            pass
+        else:
+            if abs(p[inds_center[idx1]]-p[inds_center[idx2]]) <= 0 and abs(delta[inds_center[idx1]]-delta[inds_center[idx2]]) <= 0.5:
+                print idx1, idx2
+                inds_center[idx1] = inds_center[idx2]
+            else:
+                pass
+inds_center = np.unique(inds_center)
+
+print 'number of cluster centers is %.i'%np.shape(inds_center)[0]
+
+
+#inds = np.squeeze(np.where((p>p_thresh) & (delta>delta_thresh)))
 
 # if a cluster center is less than dc2, than exclude from list
 
 distances2 = []
-for idx in inds:
+for idx in inds_center:
     x_temp2 = (x_tot[idx]-x_tot)**2
     y_temp2 = (y_tot[idx]-y_tot)**2
     distance2 = np.sqrt(x_temp2+y_temp2)
     distances2.append(distance2)
 distances2 = np.array(distances2)
 inds2 = np.argmin(distances2,axis=0)
-print np.shape(inds)
+print np.shape(inds_center)
+
 
 ######################################################################################################################################################
 
